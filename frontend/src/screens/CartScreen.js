@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { addToCart } from '../actions/cartActions';
+import { addToCart, removeFromCart } from '../actions/cartActions';
 import MessageBox from '../components/MessageBox';
 
 export default function CartScreen() {
   const { id: productId } = useParams();
   const [searchParams] = useSearchParams();
-  const qty = searchParams.get('qty') || 1;
+  const qty = Number(searchParams.get('qty')) || 1;
 
   const dispatch = useDispatch();
 
@@ -23,7 +23,7 @@ export default function CartScreen() {
   }, [dispatch, productId, qty]);
 
   const removeFromCartHandler = (id) => {
-    // Implement delete action
+    dispatch(removeFromCart(id));
   };
 
   const checkoutHandler = () => {
@@ -78,7 +78,7 @@ export default function CartScreen() {
           <ul>
             <li>
               <h2>
-                Subtotal ({cartItems.reduce((a, c) => a + Number(c.qty), 0)} items) : $
+                Subtotal ({cartItems.reduce((a, c) => a + c.qty, 0)} items) : $
                 {cartItems.reduce((a, c) => a + c.price * c.qty, 0)}
               </h2>
             </li>
