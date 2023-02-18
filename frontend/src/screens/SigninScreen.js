@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { signin } from '../actions/userActions';
 
 export default function SigninScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
+
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/';
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(signin(email, password));
   };
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate(redirect);
+    }
+  }, [userInfo, navigate, redirect]);
 
   return (
     <div>
