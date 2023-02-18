@@ -1,14 +1,36 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { signin } from '../actions/userActions';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
 
-export default function SigninScreen() {
+export default function SigninScreen(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo, loading, error } = userSignin;
+
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/';
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const submitHandler = (e) => {
     e.preventDefault();
-    // TODO: sign in action
+    dispatch(signin(email, password));
   };
+
+  useEffect(() => {
+    if (userInfo) {
+      // TODO: fix this url should be /shipping, instead of /signin/shipping
+      // navigate(redirectUrl);
+      // TEMP FIX:
+      window.location.href = redirectUrl;
+    }
+  }, [userInfo, redirectUrl, navigate]);
 
   return (
     <div>
@@ -16,6 +38,8 @@ export default function SigninScreen() {
         <div>
           <h1>Sign In</h1>
         </div>
+        {loading && <LoadingBox />}
+        {error && <MessageBox variant="danger">{error}</MessageBox>}
         <div>
           <label htmlFor="email">Email Address</label>
           <input
