@@ -4,9 +4,12 @@ import userRouter from './routers/userRouter.js';
 import dotenv from 'dotenv';
 import productRouter from './routers/productRouter.js';
 
+dotenv.config();
+
 const app = express();
 
-dotenv.config();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 mongoose.set('strictQuery', false);
 
