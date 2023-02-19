@@ -9,6 +9,7 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const userRegister = useSelector((state) => state.userRegister);
   const { userInfo, loading, error } = userRegister;
@@ -21,7 +22,11 @@ export default function RegisterScreen() {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(register(name, email, password));
+    if (password !== confirmPassword) {
+      alert('Passwords do not match. Please try again.');
+    } else {
+      dispatch(register(name, email, password));
+    }
   };
 
   useEffect(() => {
@@ -34,7 +39,7 @@ export default function RegisterScreen() {
     <div>
       <form className="form" onSubmit={submitHandler}>
         <div>
-          <h1>Register</h1>
+          <h1>Create Account</h1>
         </div>
         {loading && <LoadingBox />}
         {error && <MessageBox variant="danger">{error}</MessageBox>}
@@ -60,6 +65,16 @@ export default function RegisterScreen() {
             placeholder="Enter password"
             required
             onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Enter confirm password"
+            required
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
         <div>
