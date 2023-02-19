@@ -30,7 +30,6 @@ export default function ShippingAddressScreen() {
     e.preventDefault();
     dispatch(saveShippingAddress({ fullName, address, city, postalCode, country }));
     navigate('/payment');
-    // TODO: Dispatch save shipoping address action
   };
 
   return (
