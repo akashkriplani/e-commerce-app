@@ -13,7 +13,9 @@ export default function SigninScreen() {
   const { userInfo, loading, error } = userSignin;
 
   const [searchParams] = useSearchParams();
-  const redirectUrl = '/' + (searchParams.get('redirect') || '');
+  const redirectUrl = searchParams.get('redirect') || '';
+
+  const registerUrl = redirectUrl !== '' ? `/register?redirect=${redirectUrl}` : `/register`;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ export default function SigninScreen() {
 
   useEffect(() => {
     if (userInfo) {
-      navigate(redirectUrl);
+      navigate(`/${redirectUrl}`);
     }
   }, [userInfo, redirectUrl, navigate]);
 
@@ -66,7 +68,7 @@ export default function SigninScreen() {
         <div>
           <label></label>
           <div>
-            New customer? <Link to="/register">Create your account</Link>
+            New customer? <Link to={registerUrl}>Create your account</Link>
           </div>
         </div>
       </form>
