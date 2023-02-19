@@ -15,7 +15,9 @@ export default function RegisterScreen() {
   const { userInfo, loading, error } = userRegister;
 
   const [searchParams] = useSearchParams();
-  const redirectUrl = '/' + (searchParams.get('redirect') || '');
+
+  const redirectUrl = searchParams.get('redirect') || '';
+  const signInUrl = redirectUrl !== '' ? `/signin?redirect=${redirectUrl}` : `/signin`;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -31,7 +33,7 @@ export default function RegisterScreen() {
 
   useEffect(() => {
     if (userInfo) {
-      navigate(redirectUrl);
+      navigate(`/${redirectUrl}`);
     }
   }, [userInfo, redirectUrl, navigate]);
 
@@ -86,7 +88,7 @@ export default function RegisterScreen() {
         <div>
           <label></label>
           <div>
-            Already have an account? <Link to="/signin">Sign In</Link>
+            Already have an account? <Link to={signInUrl}>Sign In</Link>
           </div>
         </div>
       </form>
