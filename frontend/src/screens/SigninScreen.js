@@ -13,7 +13,7 @@ export default function SigninScreen(props) {
   const { userInfo, loading, error } = userSignin;
 
   const [searchParams] = useSearchParams();
-  const redirectUrl = searchParams.get('redirect') || '/';
+  const redirectUrl = '/' + (searchParams.get('redirect') || '');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,10 +25,7 @@ export default function SigninScreen(props) {
 
   useEffect(() => {
     if (userInfo) {
-      // TODO: fix this url should be /shipping, instead of /signin/shipping
-      // navigate(redirectUrl);
-      // TEMP FIX:
-      window.location.href = redirectUrl;
+      navigate(redirectUrl);
     }
   }, [userInfo, redirectUrl, navigate]);
 
