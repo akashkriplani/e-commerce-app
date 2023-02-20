@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import CheckoutSteps from '../components/CheckoutSteps';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
+import { createOrder } from '../actions/orderActions';
+import { ORDER_CREATE_RESET } from '../constants/orderConstants';
 
 export default function PlaceOrderScreen() {
   const cart = useSelector((state) => state.cart);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const toPrice = (num) => Number(num.toFixed(2));
@@ -16,15 +21,22 @@ export default function PlaceOrderScreen() {
 
   cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice;
 
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { loading, success, error, order } = orderCreate;
+
   const placeOrderHandler = () => {
-    // TODO: Dispatch place order action
+    dispatch(createOrder({ ...cart, orderItems: cart.cartItems }));
   };
 
   useEffect(() => {
     if (!cart.paymentMethod) {
       navigate('/payment');
     }
-  }, [cart, navigate]);
+    if (success) {
+      navigate(`/order/${order._id}`);
+      dispatch({ type: ORDER_CREATE_RESET });
+    }
+  }, [cart, navigate, success, dispatch, order]);
 
   return (
     <div>
@@ -118,6 +130,8 @@ export default function PlaceOrderScreen() {
                   Place Order
                 </button>
               </li>
+              {loading && <LoadingBox />}
+              {error && <MessageBox variant="danger">{error}</MessageBox>}
             </ul>
           </div>
         </div>
