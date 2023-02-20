@@ -7,7 +7,6 @@ import { detailsOrder } from '../actions/orderActions';
 
 export default function OrderScreen() {
   const { id: orderId } = useParams();
-  console.log(orderId);
   const dispatch = useDispatch();
 
   const orderDetails = useSelector((state) => state.orderDetails);
@@ -35,6 +34,11 @@ export default function OrderScreen() {
                   <strong>Address: </strong> {order.shippingAddress.address}, {order.shippingAddress.city},{' '}
                   {order.shippingAddress.postalCode}, {order.shippingAddress.country}
                 </p>
+                {order.isDelivered ? (
+                  <MessageBox variant="success">Delivered at {order.deliveredAt}</MessageBox>
+                ) : (
+                  <MessageBox variant="danger">Not Delivered</MessageBox>
+                )}
               </div>
             </li>
             <li>
@@ -43,6 +47,11 @@ export default function OrderScreen() {
                 <p>
                   <strong>Method: </strong> {order.paymentMethod}
                 </p>
+                {order.isPaid ? (
+                  <MessageBox variant="success">Paid at {order.paidAt}</MessageBox>
+                ) : (
+                  <MessageBox variant="danger">Not Paid</MessageBox>
+                )}
               </div>
             </li>
             <li>
