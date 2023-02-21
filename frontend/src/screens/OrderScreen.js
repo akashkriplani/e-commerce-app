@@ -5,7 +5,8 @@ import axios from 'axios';
 import { PayPalButton } from 'react-paypal-button-v2';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { detailsOrder } from '../actions/orderActions';
+import { detailsOrder, payOrder } from '../actions/orderActions';
+import { ORDER_PAY_RESET } from '../constants/orderConstants';
 
 export default function OrderScreen() {
   const { id: orderId } = useParams();
@@ -14,10 +15,13 @@ export default function OrderScreen() {
   const orderDetails = useSelector((state) => state.orderDetails);
   const { loading, error, order } = orderDetails;
 
+  const orderPay = useSelector((state) => state.orderPay);
+  const { success: successPay, error: errorPay, loading: loadingPay } = orderPay;
+
   const [sdkReady, setSdkReady] = useState(false);
 
-  const successPaymentHandler = () => {
-    // TODO: Dispatch pay order
+  const successPaymentHandler = (paymentResult) => {
+    dispatch(payOrder(order, paymentResult));
   };
 
   useEffect(() => {
@@ -33,7 +37,8 @@ export default function OrderScreen() {
       document.body.appendChild(script);
     };
 
-    if (!order) {
+    if (!order || successPay || (order && order._id !== orderId)) {
+      dispatch({ type: ORDER_PAY_RESET });
       dispatch(detailsOrder(orderId));
     } else {
       if (!order.isPaid) {
@@ -44,7 +49,7 @@ export default function OrderScreen() {
         }
       }
     }
-  }, [dispatch, orderId, order]);
+  }, [dispatch, orderId, order, successPay]);
 
   return loading ? (
     <LoadingBox />
@@ -147,7 +152,11 @@ export default function OrderScreen() {
                   {!sdkReady ? (
                     <LoadingBox />
                   ) : (
-                    <PayPalButton amount={order.totalPrice} onSuccess={successPaymentHandler}></PayPalButton>
+                    <>
+                      {errorPay && <MessageBox variant="danger">{errorPay}</MessageBox>}
+                      {loadingPay && <LoadingBox />}
+                      <PayPalButton amount={order.totalPrice} onSuccess={successPaymentHandler}></PayPalButton>
+                    </>
                   )}
                 </li>
               )}
