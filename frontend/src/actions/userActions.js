@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {
+  USER_DETAILS_FAILURE,
+  USER_DETAILS_REQUEST,
+  USER_DETAILS_SUCCESS,
   USER_REGISTER_FAILURE,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
@@ -43,4 +46,24 @@ export const signout = () => (dispatch) => {
   localStorage.removeItem('cartItems');
   localStorage.removeItem('shippingAddress');
   dispatch({ type: USER_SIGNOUT });
+};
+
+export const detailsUser = (userId) => async (dispatch, getState) => {
+  dispatch({ type: USER_DETAILS_REQUEST, payload: userId });
+  const {
+    userSignin: { userInfo }
+  } = getState();
+  try {
+    const { data } = await axios.get(`/api/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`
+      }
+    });
+    dispatch({ type: USER_DETAILS_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({
+      type: USER_DETAILS_FAILURE,
+      payload: err.response && err.response.data.message ? err.response.data.message : err.message
+    });
+  }
 };
