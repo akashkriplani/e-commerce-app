@@ -9,6 +9,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import ShippingAddressScreen from './screens/ShippingAddressScreen';
 import PaymentMethodScreen from './screens/PaymentMethodScreen';
 import PlaceOrderScreen from './screens/PlaceOrderScreen';
+import PrivateRoute from './components/PrivateRoute';
 import OrderScreen from './screens/OrderScreen';
 import OrderHistoryScreen from './screens/OrderHistoryScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -75,7 +76,9 @@ function App() {
             <Route path="/payment" element={<PaymentMethodScreen />} />
             <Route path="/placeorder" element={<PlaceOrderScreen />} />
             <Route path="/orderhistory" element={<OrderHistoryScreen />} />
-            <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/profile" element={<PrivateRoute />}>
+              <Route path="/profile" element={<ProfileScreen />} />
+            </Route>
             <Route path="/order/:id" element={<OrderScreen />} />
           </Routes>
         </main>
