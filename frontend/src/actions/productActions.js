@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {
+  PRODUCT_CREATE_FAILURE,
+  PRODUCT_CREATE_REQUEST,
+  PRODUCT_CREATE_SUCCESS,
   PRODUCT_DETAILS_FAILURE,
   PRODUCT_DETAILS_REQUEST,
   PRODUCT_DETAILS_SUCCESS,
@@ -26,6 +29,30 @@ export const detailsProduct = (productId) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: PRODUCT_DETAILS_FAILURE,
+      payload: err.response && err.response.data.message ? err.response.data.message : err.message
+    });
+  }
+};
+
+export const createProduct = () => async (dispatch, getState) => {
+  dispatch({ type: PRODUCT_CREATE_REQUEST });
+  const {
+    userSignin: { userInfo }
+  } = getState();
+  try {
+    const { data } = await axios.post(
+      '/api/products',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`
+        }
+      }
+    );
+    dispatch({ type: PRODUCT_CREATE_SUCCESS, payload: data.product });
+  } catch (err) {
+    dispatch({
+      type: PRODUCT_CREATE_FAILURE,
       payload: err.response && err.response.data.message ? err.response.data.message : err.message
     });
   }
