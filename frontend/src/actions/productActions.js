@@ -8,7 +8,10 @@ import {
   PRODUCT_DETAILS_SUCCESS,
   PRODUCT_LIST_FAILURE,
   PRODUCT_LIST_REQUEST,
-  PRODUCT_LIST_SUCCESS
+  PRODUCT_LIST_SUCCESS,
+  PRODUCT_UPDATE_FAILURE,
+  PRODUCT_UPDATE_REQUEST,
+  PRODUCT_UPDATE_SUCCESS
 } from '../constants/productConstants';
 
 export const listProducts = () => async (dispatch) => {
@@ -53,6 +56,26 @@ export const createProduct = () => async (dispatch, getState) => {
   } catch (err) {
     dispatch({
       type: PRODUCT_CREATE_FAILURE,
+      payload: err.response && err.response.data.message ? err.response.data.message : err.message
+    });
+  }
+};
+
+export const updateProduct = (product) => async (dispatch, getState) => {
+  dispatch({ type: PRODUCT_UPDATE_REQUEST, payload: product });
+  const {
+    userSignin: { userInfo }
+  } = getState();
+  try {
+    const { data } = await axios.put(`/api/products/${product._id}`, product, {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`
+      }
+    });
+    dispatch({ type: PRODUCT_UPDATE_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({
+      type: PRODUCT_UPDATE_FAILURE,
       payload: err.response && err.response.data.message ? err.response.data.message : err.message
     });
   }
