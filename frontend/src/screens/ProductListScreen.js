@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { createProduct, listProducts } from '../actions/productActions';
-import { PRODUCT_CREATE_RESET } from '../constants/productConstants';
+import { createProduct, listProducts, deleteProduct } from '../actions/productActions';
+import { PRODUCT_CREATE_RESET, PRODUCT_DELETE_RESET } from '../constants/productConstants';
 
 const ProductListScreen = () => {
   const productList = useSelector((state) => state.productList);
@@ -12,6 +12,9 @@ const ProductListScreen = () => {
 
   const productCreate = useSelector((state) => state.productCreate);
   const { loading: loadingCreate, success: successCreate, error: errorCreate, product: createdProduct } = productCreate;
+
+  const productDelete = useSelector((state) => state.productDelete);
+  const { loading: loadingDelete, success: successDelete, error: errorDelete } = productDelete;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -21,7 +24,9 @@ const ProductListScreen = () => {
   };
 
   const deleteHandler = (product) => {
-    // TODO: Dispatch delete action
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      dispatch(deleteProduct(product._id));
+    }
   };
 
   useEffect(() => {
@@ -29,8 +34,11 @@ const ProductListScreen = () => {
       dispatch({ type: PRODUCT_CREATE_RESET });
       navigate(`/product/${createdProduct._id}/edit`);
     }
+    if (successDelete) {
+      dispatch({ type: PRODUCT_DELETE_RESET });
+    }
     dispatch(listProducts());
-  }, [dispatch, successCreate, createdProduct, navigate]);
+  }, [dispatch, successCreate, createdProduct, navigate, successDelete]);
 
   return (
     <div>
@@ -42,6 +50,8 @@ const ProductListScreen = () => {
       </div>
       {loadingCreate && <LoadingBox />}
       {errorCreate && <MessageBox variant="danger">{errorCreate}</MessageBox>}
+      {loadingDelete && <LoadingBox />}
+      {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
       {loading ? (
         <LoadingBox />
       ) : error ? (
