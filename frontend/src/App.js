@@ -16,6 +16,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import AdminRoute from './components/AdminRoute';
 import ProductListScreen from './screens/ProductListScreen';
 import ProductEditScreen from './screens/ProductEditScreen';
+import OrderListScreen from './screens/OrderListScreen';
 
 function App() {
   const cart = useSelector((state) => state.cart);
@@ -106,6 +107,9 @@ function App() {
             </Route>
             <Route path="/productlist" element={<AdminRoute />}>
               <Route path="/productlist" element={<ProductListScreen />} />
+            </Route>
+            <Route path="/orderlist" element={<AdminRoute />}>
+              <Route path="/orderlist" element={<OrderListScreen />} />
             </Route>
             <Route path="/order/:id" element={<OrderScreen />} />
           </Routes>
