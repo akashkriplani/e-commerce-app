@@ -1,0 +1,2 @@
+This is a test file just uploaded so that the uploads folder could be committed in git.
+The uploads folder contains image files which are uploaded using Edit Product in admin mode.
