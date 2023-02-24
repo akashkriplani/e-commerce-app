@@ -1,9 +1,11 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import path from 'path';
 import userRouter from './routers/userRouter.js';
 import productRouter from './routers/productRouter.js';
 import orderRouter from './routers/orderRouter.js';
+import uploadRouter from './routers/uploadRouter.js';
 
 dotenv.config();
 
@@ -22,6 +24,8 @@ mongoose
   .then(() => console.log('Connected to db.'))
   .catch(() => console.log('Error in connecting to db.'));
 
+app.use('/api/uploads', uploadRouter);
+
 app.use('/api/users', userRouter);
 
 app.use('/api/products', productRouter);
@@ -35,6 +39,9 @@ app.get('/api/config/paypal', (req, res) => {
 app.get('/', (req, res) => {
   res.send('Server is ready!');
 });
+
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname + '/uploads')));
 
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
