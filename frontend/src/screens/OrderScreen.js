@@ -5,12 +5,15 @@ import axios from 'axios';
 import { PayPalButton } from 'react-paypal-button-v2';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { detailsOrder, payOrder } from '../actions/orderActions';
-import { ORDER_PAY_RESET } from '../constants/orderConstants';
+import { deliverOrder, detailsOrder, payOrder } from '../actions/orderActions';
+import { ORDER_DELIVER_RESET, ORDER_PAY_RESET } from '../constants/orderConstants';
 
 export default function OrderScreen() {
   const { id: orderId } = useParams();
   const dispatch = useDispatch();
+
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { loading, error, order } = orderDetails;
@@ -19,6 +22,13 @@ export default function OrderScreen() {
   const { success: successPay, error: errorPay, loading: loadingPay } = orderPay;
 
   const [sdkReady, setSdkReady] = useState(false);
+
+  const orderDeliver = useSelector((state) => state.orderDeliver);
+  const { loading: loadingDeliver, error: errorDeliver, success: successDeliver } = orderDeliver;
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order._id));
+  };
 
   const successPaymentHandler = (paymentResult) => {
     dispatch(payOrder(order, paymentResult));
@@ -37,8 +47,9 @@ export default function OrderScreen() {
       document.body.appendChild(script);
     };
 
-    if (!order || successPay || (order && order._id !== orderId)) {
+    if (!order || successPay || successDeliver || (order && order._id !== orderId)) {
       dispatch({ type: ORDER_PAY_RESET });
+      dispatch({ type: ORDER_DELIVER_RESET });
       dispatch(detailsOrder(orderId));
     } else {
       if (!order.isPaid) {
@@ -49,7 +60,7 @@ export default function OrderScreen() {
         }
       }
     }
-  }, [dispatch, orderId, order, successPay]);
+  }, [dispatch, orderId, order, successPay, successDeliver]);
 
   return loading ? (
     <LoadingBox />
@@ -161,6 +172,15 @@ export default function OrderScreen() {
                       ></PayPalButton>
                     </>
                   )}
+                </li>
+              )}
+              {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                <li>
+                  {loadingDeliver && <LoadingBox />}
+                  {errorDeliver && <MessageBox variant="danger">{errorDeliver}</MessageBox>}
+                  <button type="button" className="primary block" onClick={deliverHandler}>
+                    Deliver Order
+                  </button>
                 </li>
               )}
             </ul>
