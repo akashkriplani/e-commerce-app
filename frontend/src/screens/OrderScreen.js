@@ -155,7 +155,10 @@ export default function OrderScreen() {
                     <>
                       {errorPay && <MessageBox variant="danger">{errorPay}</MessageBox>}
                       {loadingPay && <LoadingBox />}
-                      <PayPalButton amount={order.totalPrice} onSuccess={successPaymentHandler}></PayPalButton>
+                      <PayPalButton
+                        amount={order.totalPrice.toFixed(2)}
+                        onSuccess={successPaymentHandler}
+                      ></PayPalButton>
                     </>
                   )}
                 </li>
