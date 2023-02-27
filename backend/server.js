@@ -24,6 +24,9 @@ mongoose
   .then(() => console.log('Connected to db.'))
   .catch(() => console.log('Error in connecting to db.'));
 
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname + '/uploads')));
+
 app.use('/api/uploads', uploadRouter);
 
 app.use('/api/users', userRouter);
@@ -39,9 +42,6 @@ app.get('/api/config/paypal', (req, res) => {
 app.get('/', (req, res) => {
   res.send('Server is ready!');
 });
-
-const __dirname = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname + '/uploads')));
 
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
