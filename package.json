@@ -5,11 +5,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "cd frontend && npm install --legacy-peer-deps && npm run build",
     "start": "nodemon --watch backend --exec node --experimental-modules backend/server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/akashkriplani/e-commerce-app.git"
+  },
+  "engines": {
+    "node": "12.4.0",
+    "npm": "6.9.0"
   },
   "author": "",
   "license": "ISC",
