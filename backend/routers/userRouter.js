@@ -122,4 +122,23 @@ userRouter.delete(
   })
 );
 
+userRouter.put(
+  '/:id',
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      user.name = req.body.name || user.name;
+      user.email = req.body.email || user.email;
+      user.isSeller = req.body.isSeller || user.isSeller;
+      user.isAdmin = req.body.isAdmin || user.isAdmin;
+      const updateUser = await user.save();
+      res.send({ message: 'User updated', user: updateUser });
+    } else {
+      res.status(404).send({ message: 'User not found' });
+    }
+  })
+);
+
 export default userRouter;
