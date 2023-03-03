@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { deleteUser, listUsers } from '../actions/userActions';
@@ -12,6 +13,7 @@ export default function UserListScreen() {
   const { loading: loadingDelete, error: errorDelete, success: successDelete } = userDelete;
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const deleteHandler = (user) => {
     if (window.confirm('Are you sure?')) {
@@ -54,7 +56,7 @@ export default function UserListScreen() {
                 <td>{user.isSeller ? 'YES' : 'NO'}</td>
                 <td>{user.isAdmin ? 'YES' : 'NO'}</td>
                 <td>
-                  <button type="button" className="small">
+                  <button type="button" className="small" onClick={() => navigate(`/user/${user._id}/edit`)}>
                     Edit
                   </button>
                   <button type="button" className="small" onClick={() => deleteHandler(user)}>
