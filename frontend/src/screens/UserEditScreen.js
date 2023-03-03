@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { detailsUser } from '../actions/userActions';
+import { detailsUser, updateUser } from '../actions/userActions';
+import { USER_UPDATE_RESET } from '../constants/userConstants';
 
 export default function UserEditScreen() {
   const [name, setName] = useState('');
@@ -13,11 +14,19 @@ export default function UserEditScreen() {
 
   const { id: userId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
 
+  const userUpdate = useSelector((state) => state.userUpdate);
+  const { loading: loadingUpdate, error: errorUpdate, success: successUpdate } = userUpdate;
+
   useEffect(() => {
+    if (successUpdate) {
+      dispatch({ type: USER_UPDATE_RESET });
+      navigate('/userlist');
+    }
     if (!user) {
       dispatch(detailsUser(userId));
     } else {
@@ -26,11 +35,12 @@ export default function UserEditScreen() {
       setIsSeller(user.isSeller);
       setIsAdmin(user.isAdmin);
     }
-  }, [dispatch, user, userId]);
+  }, [dispatch, user, userId, successUpdate, navigate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
     // Dispatch update user
+    dispatch(updateUser({ _id: userId, name, email, isSeller, isAdmin }));
   };
 
   return (
@@ -38,6 +48,8 @@ export default function UserEditScreen() {
       <form className="form" onSubmit={submitHandler}>
         <div>
           <h1>Edit User {name}</h1>
+          {loadingUpdate && <LoadingBox />}
+          {errorUpdate && <MessageBox variant="danger">{errorUpdate}</MessageBox>}
         </div>
         {loading ? (
           <LoadingBox />
