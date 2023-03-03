@@ -3,6 +3,9 @@ import {
   USER_DETAILS_FAILURE,
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
+  USER_LIST_FAILURE,
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
   USER_REGISTER_FAILURE,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
@@ -88,6 +91,26 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
   } catch (err) {
     dispatch({
       type: USER_UPDATE_PROFILE_FAILURE,
+      payload: err.response && err.response.data.message ? err.response.data.message : err.message
+    });
+  }
+};
+
+export const listUsers = () => async (dispatch, getState) => {
+  dispatch({ type: USER_LIST_REQUEST });
+  const {
+    userSignin: { userInfo }
+  } = getState();
+  try {
+    const { data } = await axios.get(`/api/users`, {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`
+      }
+    });
+    dispatch({ type: USER_LIST_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({
+      type: USER_LIST_FAILURE,
       payload: err.response && err.response.data.message ? err.response.data.message : err.message
     });
   }
