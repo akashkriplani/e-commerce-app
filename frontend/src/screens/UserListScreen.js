@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { deleteUser, listUsers } from '../actions/userActions';
+import { USER_DETAILS_RESET } from '../constants/userConstants';
 
 export default function UserListScreen() {
   const userList = useSelector((state) => state.userList);
@@ -23,6 +24,7 @@ export default function UserListScreen() {
 
   useEffect(() => {
     dispatch(listUsers());
+    dispatch({ type: USER_DETAILS_RESET });
   }, [dispatch, successDelete]);
 
   return (
