@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {
+  USER_DELETE_FAILURE,
+  USER_DELETE_REQUEST,
+  USER_DELETE_SUCCESS,
   USER_DETAILS_FAILURE,
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
@@ -111,6 +114,26 @@ export const listUsers = () => async (dispatch, getState) => {
   } catch (err) {
     dispatch({
       type: USER_LIST_FAILURE,
+      payload: err.response && err.response.data.message ? err.response.data.message : err.message
+    });
+  }
+};
+
+export const deleteUser = (userId) => async (dispatch, getState) => {
+  dispatch({ type: USER_DELETE_REQUEST, payload: userId });
+  try {
+    const {
+      userSignin: { userInfo }
+    } = getState();
+    const { data } = await axios.delete(`/api/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`
+      }
+    });
+    dispatch({ type: USER_DELETE_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({
+      type: USER_DELETE_FAILURE,
       payload: err.response && err.response.data.message ? err.response.data.message : err.message
     });
   }
