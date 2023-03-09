@@ -123,10 +123,10 @@ function App() {
             <Route path="/profile" element={<PrivateRoute />}>
               <Route path="/profile" element={<ProfileScreen />} />
             </Route>
-            <Route path="/productlist" element={<AdminRoute />}>
+            <Route path="/productlist" exact element={<AdminRoute />}>
               <Route path="/productlist" element={<ProductListScreen />} />
             </Route>
-            <Route path="/orderlist" element={<AdminRoute />}>
+            <Route path="/orderlist" exact element={<AdminRoute />}>
               <Route path="/orderlist" element={<OrderListScreen />} />
             </Route>
             <Route path="/userlist" element={<AdminRoute />}>
