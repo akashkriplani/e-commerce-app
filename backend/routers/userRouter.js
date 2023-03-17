@@ -54,7 +54,7 @@ userRouter.post(
       name: createdUser.name,
       email: createdUser.email,
       isAdmin: createdUser.isAdmin,
-      isSeller: createdUser.isSeller,
+      isSeller: user.isSeller,
       token: generateToken(createdUser)
     });
   })
@@ -94,7 +94,7 @@ userRouter.put(
         name: updatedUser.name,
         email: updatedUser.email,
         isAdmin: updatedUser.isAdmin,
-        isSeller: updatedUser.isSeller,
+        isSeller: user.isSeller,
         token: generateToken(updatedUser)
       });
     }
