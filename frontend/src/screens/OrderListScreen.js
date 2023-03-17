@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { deleteOrder, listOrders } from '../actions/orderActions';
 import { ORDER_DELETE_RESET } from '../constants/orderConstants';
 
 export default function OrderListScreen() {
+  const location = useLocation();
+  const sellerMode = location.pathname.indexOf('seller') !== -1;
   const orderList = useSelector((state) => state.orderList);
   const { loading, error, orders } = orderList;
 
@@ -16,10 +18,13 @@ export default function OrderListScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
+
   useEffect(() => {
     dispatch({ type: ORDER_DELETE_RESET });
-    dispatch(listOrders());
-  }, [dispatch, successDelete]);
+    dispatch(listOrders({ seller: sellerMode ? userInfo._id : '' }));
+  }, [dispatch, successDelete, sellerMode, userInfo]);
 
   const deleteHandler = (order) => {
     if (window.confirm('Are you sure you want to delete?')) {
