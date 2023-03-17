@@ -19,6 +19,7 @@ import ProductEditScreen from './screens/ProductEditScreen';
 import OrderListScreen from './screens/OrderListScreen';
 import UserListScreen from './screens/UserListScreen';
 import UserEditScreen from './screens/UserEditScreen';
+import SellerRoute from './components/SellerRoute';
 
 function App() {
   const cart = useSelector((state) => state.cart);
@@ -69,6 +70,21 @@ function App() {
             ) : (
               <Link to="/signin">Sign In</Link>
             )}
+            {userInfo && userInfo.isSeller && (
+              <div className="dropdown">
+                <Link to="/admin">
+                  Seller <i className="fa fa-caret-down"></i>
+                </Link>
+                <ul className="dropdown-content">
+                  <li>
+                    <Link to="/productlist/seller">Products</Link>
+                  </li>
+                  <li>
+                    <Link to="/orderlist/seller">Orders</Link>
+                  </li>
+                </ul>
+              </div>
+            )}
             {userInfo && userInfo.isAdmin && (
               <div className="dropdown">
                 <Link to="/admin">
@@ -107,10 +123,10 @@ function App() {
             <Route path="/profile" element={<PrivateRoute />}>
               <Route path="/profile" element={<ProfileScreen />} />
             </Route>
-            <Route path="/productlist" element={<AdminRoute />}>
+            <Route path="/productlist" exact element={<AdminRoute />}>
               <Route path="/productlist" element={<ProductListScreen />} />
             </Route>
-            <Route path="/orderlist" element={<AdminRoute />}>
+            <Route path="/orderlist" exact element={<AdminRoute />}>
               <Route path="/orderlist" element={<OrderListScreen />} />
             </Route>
             <Route path="/userlist" element={<AdminRoute />}>
@@ -118,6 +134,12 @@ function App() {
             </Route>
             <Route path="/user/:id/edit" element={<AdminRoute />}>
               <Route path="/user/:id/edit" element={<UserEditScreen />} />
+            </Route>
+            <Route path="/productlist/seller" element={<SellerRoute />}>
+              <Route path="/productlist/seller" element={<ProductListScreen />} />
+            </Route>
+            <Route path="/orderlist/seller" element={<SellerRoute />}>
+              <Route path="/orderlist/seller" element={<OrderListScreen />} />
             </Route>
             <Route path="/order/:id" element={<OrderScreen />} />
           </Routes>

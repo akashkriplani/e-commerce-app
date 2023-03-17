@@ -1,12 +1,15 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { createProduct, listProducts, deleteProduct } from '../actions/productActions';
 import { PRODUCT_CREATE_RESET, PRODUCT_DELETE_RESET } from '../constants/productConstants';
 
 const ProductListScreen = () => {
+  const location = useLocation();
+  const sellerMode = location.pathname.indexOf('seller') !== -1;
+
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
 
@@ -18,6 +21,9 @@ const ProductListScreen = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
 
   const createHandler = () => {
     dispatch(createProduct());
@@ -37,8 +43,8 @@ const ProductListScreen = () => {
     if (successDelete) {
       dispatch({ type: PRODUCT_DELETE_RESET });
     }
-    dispatch(listProducts());
-  }, [dispatch, successCreate, createdProduct, navigate, successDelete]);
+    dispatch(listProducts({ seller: sellerMode ? userInfo._id : '' }));
+  }, [dispatch, successCreate, createdProduct, navigate, successDelete, sellerMode, userInfo]);
 
   return (
     <div>
