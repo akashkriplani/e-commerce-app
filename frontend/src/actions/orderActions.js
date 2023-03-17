@@ -104,23 +104,25 @@ export const listOrderMine = () => async (dispatch, getState) => {
   }
 };
 
-export const listOrders = () => async (dispatch, getState) => {
-  dispatch({ type: ORDER_LIST_REQUEST });
-  const {
-    userSignin: { userInfo }
-  } = getState();
-  try {
-    const { data } = await axios.get('/api/orders', {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`
-      }
-    });
-    dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
-  } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-    dispatch({ type: ORDER_LIST_FAILURE, payload: message });
-  }
-};
+export const listOrders =
+  ({ seller = '' }) =>
+  async (dispatch, getState) => {
+    dispatch({ type: ORDER_LIST_REQUEST });
+    const {
+      userSignin: { userInfo }
+    } = getState();
+    try {
+      const { data } = await axios.get(`/api/orders?seller=${seller}`, {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`
+        }
+      });
+      dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
+    } catch (error) {
+      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      dispatch({ type: ORDER_LIST_FAILURE, payload: message });
+    }
+  };
 
 export const deleteOrder = (orderId) => async (dispatch, getState) => {
   dispatch({ type: ORDER_DELETE_REQUEST, payload: orderId });
