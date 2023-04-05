@@ -8,6 +8,14 @@ import { generateToken, isAuth, isAdmin } from '../utils.js';
 const userRouter = express.Router();
 
 userRouter.get(
+  '/top-sellers',
+  expressAsyncHandler(async (req, res) => {
+    const topSellers = await User.find({ isSeller: true }).sort({ 'seller.rating': -1 }).limit(3);
+    res.send(topSellers);
+  })
+);
+
+userRouter.get(
   '/seed',
   expressAsyncHandler(async (req, res) => {
     // Below line removes all the users from db and then creates it again from data.users
