@@ -16,6 +16,9 @@ import {
   USER_SIGNIN_REQUEST,
   USER_SIGNIN_SUCCESS,
   USER_SIGNOUT,
+  USER_TOPSELLERS_LIST_FAILURE,
+  USER_TOPSELLERS_LIST_REQUEST,
+  USER_TOPSELLERS_LIST_SUCCESS,
   USER_UPDATE_FAILURE,
   USER_UPDATE_PROFILE_FAILURE,
   USER_UPDATE_PROFILE_REQUEST,
@@ -157,6 +160,19 @@ export const updateUser = (user) => async (dispatch, getState) => {
   } catch (err) {
     dispatch({
       type: USER_UPDATE_FAILURE,
+      payload: err.response && err.response.data.message ? err.response.data.message : err.message
+    });
+  }
+};
+
+export const listTopSellers = () => async (dispatch) => {
+  dispatch({ type: USER_TOPSELLERS_LIST_REQUEST });
+  try {
+    const { data } = await axios.get(`/api/users/top-sellers`);
+    dispatch({ type: USER_TOPSELLERS_LIST_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({
+      type: USER_TOPSELLERS_LIST_FAILURE,
       payload: err.response && err.response.data.message ? err.response.data.message : err.message
     });
   }
